@@ -1,0 +1,12 @@
+attrs==17.2.0
+Automat==0.6.0
+click==6.7
+constantly==15.1.0
+gevent==1.2.2
+greenlet==0.4.12
+hyperlink==17.2.1
+incremental==17.5.0
+PyYAML==3.12
+six==1.10.0
+Twisted==17.5.0
+zope.interface==4.4.2

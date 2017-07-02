@@ -1,0 +1,23 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+  config.vm.network :private_network, type: "dhcp"
+  config.vm.synced_folder "../../jitfs", "/home/vagrant/jitfs"
+
+  config.vm.define :jitfs do |jitfs|
+    jitfs.vm.provider "virtualbox" do |v|
+      v.customize [
+        "guestproperty",
+        "set",
+        :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold",
+        1000
+      ]
+      v.memory = 1024
+      v.cpus = 1
+    end
+    jitfs.vm.hostname = 'jitfs.box'
+    jitfs.vm.provision "shell", path: "./provision.sh"
+  end
+end

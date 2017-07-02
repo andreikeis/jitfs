@@ -1,0 +1,3 @@
+[submodule "jitfs-fuse"]
+	path = jitfs-fuse
+	url = https://github.com/andreikeis/jitfs-fuse.git

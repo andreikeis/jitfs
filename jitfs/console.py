@@ -116,11 +116,14 @@ def request(socket_path, cache, checksum):
               required=True)
 @click.option('--mirror-db', help='Path to mirror db.',
               required=True)
+@click.option('--rel-path', help='Use relative path for jitfs symlinks.',
+              is_flag=True, default=False)
 @click.option('--root', default='/')
 @click.argument('source')
-def checkout(backend, backend_config, mirror, mirror_db, root, source):
+def checkout(backend, backend_config, mirror, mirror_db, rel_path, root,
+             source):
     """Checkout local directory."""
     kwargs = yaml.load(backend_config.read()).get(backend, {})
     provider = _PROVIDERS[backend](**kwargs)
 
-    jitfs.checkout(provider, mirror, mirror_db, root, source)
+    jitfs.checkout(provider, mirror, mirror_db, root, source, rel_path)

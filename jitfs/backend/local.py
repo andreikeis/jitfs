@@ -27,6 +27,7 @@ class JitfsLocalBackend(object):
         self.cache_db_cur.execute(self._CREATE_TABLE_SQL)
 
     def put(self, checksum, path):
+        _LOGGER.info('put: %s %s', checksum, path)
         self.cache_db_cur.execute(self._INSERT_PATH_SQL, (checksum, path, ))
 
     def get(self, checksum, cache_path):

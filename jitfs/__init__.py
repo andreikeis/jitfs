@@ -90,7 +90,7 @@ class JitfsClient(object):
             received = self.sock.recvfrom(32)
 
 
-def checkout(provider, mirror, mirror_db, root, source):
+def checkout(provider, mirror, mirror_db, root, source, rel_path):
     """Checkout local directory."""
     mirror = mirror.rstrip('/')
     source = source.rstrip('/')
@@ -116,6 +116,10 @@ def checkout(provider, mirror, mirror_db, root, source):
             utils.symlink(os.readlink(filename), link_name)
             return
 
+        if not os.path.isfile(filename):
+            _LOGGER.info('Ignore special file: %s', filename)
+            return
+
         try:
             with open(filename, 'rb') as f:
                 checksum = hashlib.sha256(f.read()).hexdigest()
@@ -138,12 +142,15 @@ def checkout(provider, mirror, mirror_db, root, source):
             (checksum, is_exe, size,))
 
         link_name = os.path.join(mirror, filename[len(root):])
-        jitfs_fullpath = os.path.join(mirror, '.jitfs', checksum)
-        jitfs_relpath = os.path.relpath(
-            jitfs_fullpath, os.path.dirname(link_name))
+        if rel_path:
+            jitfs_fullpath = os.path.join(mirror, '.jitfs', checksum)
+            jitfs_link_tgt = os.path.relpath(
+                jitfs_fullpath, os.path.dirname(link_name))
+        else:
+            jitfs_link_tgt = os.path.join('/.jitfs', checksum)
 
-        _LOGGER.info('Link: %s - %s', jitfs_relpath, link_name)
-        utils.symlink(jitfs_relpath, link_name)
+        _LOGGER.info('Link: %s - %s', jitfs_link_tgt, link_name)
+        utils.symlink(jitfs_link_tgt, link_name)
 
     # Add recursively if source is directory, otherwise process one file.
     if os.path.isdir(source):
